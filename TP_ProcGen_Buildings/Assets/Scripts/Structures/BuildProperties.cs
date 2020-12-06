@@ -10,10 +10,10 @@ public class BuildProperties
     public bool corner = false;
     public EBuildingStyle style = EBuildingStyle.None;
 
-    public bool Match(BuildProperties compareProps)
+    public bool Match(BuildProperties comparedProps)
     {
-        return (ground == compareProps.ground && roof == compareProps.roof && corner == compareProps.corner 
-            && (style == EBuildingStyle.None || compareProps.style == EBuildingStyle.None || style == compareProps.style));
+        return (ground == comparedProps.ground && roof == comparedProps.roof && corner == comparedProps.corner 
+            && (style == EBuildingStyle.None || comparedProps.style == EBuildingStyle.None || style == comparedProps.style));
     }
 
     public override string ToString()

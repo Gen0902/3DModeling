@@ -8,6 +8,7 @@ public class Cell
 
     public Vector3Int Position { get; private set; }
 
+    public EOrientation orientation = EOrientation.Front;
     public bool enabled = false;
 
     public Cell(int x, int y, int z, bool enable = false)

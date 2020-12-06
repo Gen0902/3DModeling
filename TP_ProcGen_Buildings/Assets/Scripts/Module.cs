@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Building : MonoBehaviour
+public class Module : MonoBehaviour
 {
     public BuildProperties buildProperties;
     //[HideInInspector] public EOrientation orientation;

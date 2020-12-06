@@ -489,7 +489,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &309470698
 Transform:
   m_ObjectHideFlags: 0
@@ -1269,8 +1269,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 696526327}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.68, y: -0.5, z: 4.41}
-  m_LocalScale: {x: 25, y: 1, z: 25}
+  m_LocalPosition: {x: 11.4, y: -0.5, z: 11.43}
+  m_LocalScale: {x: 50, y: 1, z: 50}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -1692,13 +1692,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
-  m_LocalRotation: {x: -0.29690304, y: 0.017469645, z: -0.005443204, w: -0.95473236}
-  m_LocalPosition: {x: 4.8396897, y: 10.018608, z: -5.565025}
+  m_LocalRotation: {x: 0.2969499, y: -0.0000025856284, z: 0.00000831453, w: 0.95489305}
+  m_LocalPosition: {x: 9.05, y: 9.2, z: -7.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 34.549, y: 0, z: 0.001}
 --- !u!4 &974279449 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3247306858835814429, guid: 978d36009dce1064b8194b56983d65ee,
@@ -3226,10 +3226,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b394efdeb02baf4489891e1716cc6c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: {x: 10, y: 7, z: 10}
+  gridSize: {x: 20, y: 7, z: 20}
   buildPreview: {fileID: 1346511818}
   buildBlockPrefab: {fileID: 2351600126029784972, guid: 673d74f0f3a92db4ca9345c2a92d1a6b,
     type: 3}
+  buildingLentgh: 30
+  startGeneration: 0
 --- !u!4 &1785353980
 Transform:
   m_ObjectHideFlags: 0
@@ -3257,6 +3259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   builderManager: {fileID: 1785353979}
+  respectSytle: 1
   startGeneration: 0
 --- !u!4 &1897150753 stripped
 Transform:

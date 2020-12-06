@@ -5,20 +5,20 @@ using UnityEngine;
 
 public class BuildingDatabase
 {
-    private static List<Building> buildings;
+    private static List<Module> buildings;
 
     public static void Initialize()
     {
-        buildings = new List<Building>();
+        buildings = new List<Module>();
 
-        var objects = Resources.LoadAll("Prefabs", typeof(Building));
+        var objects = Resources.LoadAll("Prefabs", typeof(Module));
         foreach (var item in objects)
-            buildings.Add((Building)item);
+            buildings.Add((Module)item);
     }
 
-    public static Building GetRandomBuilding(BuildProperties buildProps)
+    public static Module GetRandomBuilding(BuildProperties buildProps)      
     {
-        List<Building> tempList = buildings.FindAll(b => b.buildProperties.Match(buildProps));
+        List<Module> tempList = buildings.FindAll(b => b.buildProperties.Match(buildProps));
 
         if (tempList.Count <= 0)
         {

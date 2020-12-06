@@ -8,6 +8,7 @@ public class ProceduralBuilder : MonoBehaviour
     public BuilderManager builderManager;
     private ProcGrid procGrid;
 
+    public bool respectSytle = false;
     public bool startGeneration = false;
 
     private void Start()
@@ -39,18 +40,20 @@ public class ProceduralBuilder : MonoBehaviour
 
     private void PlaceBuildings()
     {
-        for (int y = 0; y < procGrid.Size.y; y++)
+        for (int y = 0; y < procGrid.Size.y; y++)               //For each cell in grid (startinf drom ground)
         {
-            for (int x = 0; x < procGrid.Size.x; x++)
+            for (int x = 0; x < procGrid.Size.x; x++)           //              |
             {
-                for (int z = 0; z < procGrid.Size.z; z++)
+                for (int z = 0; z < procGrid.Size.z; z++)       //              |
                 {
                     Cell cell = procGrid.GetCell(x, y, z);
-                    if (cell.enabled)
+                    if (cell.enabled)                           
                     {
-                        Building building = BuildingDatabase.GetRandomBuilding(cell.buildProperties);
-                        if (building != null)
-                            Instantiate(building.gameObject, cell.GetCenter(), Quaternion.identity);
+                        Module building = BuildingDatabase.GetRandomBuilding(cell.buildProperties);     //Pick one matching cell properties
+                        if (building != null)       //If a module was found
+                        {
+                            PlaceBlock(building, cell);     //Place block at cell pos
+                        }
                     }
                 }
             }
@@ -58,40 +61,127 @@ public class ProceduralBuilder : MonoBehaviour
         builderManager.ClearPreview();
     }
 
-    private void PlaceBlock()
+    private void PlaceBlock(Module building, Cell cell)
     {
+        float rotation = 0;
+        switch (cell.orientation)
+        {
+            case EOrientation.Right:
+                rotation = -90;
+                break;
+            case EOrientation.Left:
+                rotation = 90;
+                break;
+            case EOrientation.Back:
+                rotation = 180;
+                break;
+            default:
+                break;
+        }
 
+        Instantiate(building.gameObject, cell.GetCenter(), Quaternion.Euler(0, rotation, 0));
+        if (respectSytle)
+        {
+            Cell topCell = procGrid.GetCellInDirection(cell, EDirection.Top);
+            if (topCell != null)
+            {
+                topCell.buildProperties.style = building.buildProperties.style;     //Propagate window style to top cell
+            }
+        }
     }
 
-    public void ApplyBaseFilters()
+    private void ApplyBaseFilters()
     {
-        for (int x = 0; x < procGrid.Size.x; x++)
+        for (int x = 0; x < procGrid.Size.x; x++)                   //For all cells in grid
         {
-            for (int y = 0; y < procGrid.Size.y; y++)
+            for (int y = 0; y < procGrid.Size.y; y++)               //          |
             {
-                for (int z = 0; z < procGrid.Size.z; z++)
+                for (int z = 0; z < procGrid.Size.z; z++)           //          |
                 {
                     Cell cell = procGrid.GetCell(x, y, z);
+                    if (!cell.enabled)          //If cell is not enabled (enalbed = has preview block)
+                        continue;
 
-                    if (!cell.buildProperties.corner && CheckIsCorner(cell))
+                    if (CheckIsCorner(cell))    //If cell is a corner
                     {
-                        cell.buildProperties.corner = true;
-                        Cell topCell = procGrid.GetCellInDirection(cell, EDirection.Top);
+                        cell.buildProperties.corner = true;                                 //Set corner prop to true
+                        Cell topCell = procGrid.GetCellInDirection(cell, EDirection.Top);   //Get top cell
                         if (topCell != null)
-                            topCell.buildProperties.corner = true;
+                            topCell.buildProperties.corner = true;               //Propagate corner property to top cell 
                     }
 
-                    if (CheckIsGround(cell))
+                    if (CheckIsGround(cell))    //If cell is on ground                                                   
                     {
                         cell.buildProperties.ground = true;
                     }
-                    else if (CheckIsTop(cell))
+                    else if (CheckIsTop(cell))  //If cell is on top
                     {
                         cell.buildProperties.roof = true;
+                    }
+
+                    if (cell.orientation == EOrientation.Front) //If cell has default orientation
+                    {
+                        cell.orientation = ComputeOrientation(cell);    //Compute orientation 
+                        Cell topCell = procGrid.GetCellInDirection(cell, EDirection.Top);
+                        if (topCell != null)
+                            topCell.orientation = cell.orientation;       //Propagate orientation property to top cell 
                     }
                 }
             }
         }
+    }
+
+    private EOrientation ComputeOrientation(Cell cell)
+    {
+        Cell backCell = procGrid.GetCellInDirection(cell, EDirection.Back);
+        Cell rightCell = procGrid.GetCellInDirection(cell, EDirection.Right);
+        Cell frontCell = procGrid.GetCellInDirection(cell, EDirection.Front);
+        Cell leftCell = procGrid.GetCellInDirection(cell, EDirection.Left);
+
+        bool back = backCell != null && backCell.enabled;
+        bool right = rightCell != null && rightCell.enabled;
+        bool front = frontCell != null && frontCell.enabled;
+        bool left = leftCell != null && leftCell.enabled;
+
+        EOrientation resultOrientation = EOrientation.Front;
+
+        if (back && !right && !front && !left)
+            resultOrientation = EOrientation.Front;
+        else if (!back && right && !front && !left)
+            resultOrientation = EOrientation.Front;
+        else if (!back && !right && front && !left)
+            resultOrientation = EOrientation.Right;
+        else if (!back && !right && !front && left)
+            resultOrientation = EOrientation.Front;
+
+        else if (back && right && !front && !left)
+            resultOrientation = EOrientation.Left;
+        else if (back && !right && front && !left)
+            resultOrientation = EOrientation.Right;
+        else if (back && !right && !front && left)
+            resultOrientation = EOrientation.Front;
+        else if (!back && right && front && !left)
+            resultOrientation = EOrientation.Back;
+        else if (!back && right && !front && left)
+            resultOrientation = EOrientation.Front;
+        else if (!back && !right && front && left)
+            resultOrientation = EOrientation.Right;
+
+        else if (back && right && front && !left)
+            resultOrientation = EOrientation.Left;
+        else if (back && right && !front && left)
+            resultOrientation = EOrientation.Front;
+        else if (back && !right && front && left)
+            resultOrientation = EOrientation.Right;
+        else if (!back && right && front && left)
+            resultOrientation = EOrientation.Back;
+
+        else if (back && right && front && left)
+            resultOrientation = EOrientation.Front;
+        else if (!back && !right && !front && !left)
+            resultOrientation = EOrientation.Front;
+
+        return resultOrientation;
     }
 
     private bool CheckIsTop(Cell cell)
