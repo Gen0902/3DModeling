@@ -81,19 +81,23 @@ public class BuilderManager : MonoBehaviour
         {
             for (int i = 1; i < y; i++)             //For 1 to desired height
             {
-                Vector3Int? groundCellPos = Grid.GetCellByWorldPos(previewBlocks[k].transform.position);    
+                Vector3Int? groundCellPos = Grid.GetCellByWorldPos(previewBlocks[k].transform.position);
                 Vector3Int cellPos = (Vector3Int)groundCellPos + Vector3Int.up * i; //Get cell position in height
-                if (groundCellPos != null && cellPos.y < gridSize.y)         
-                    PlacePreviewBlock(cellPos);                             
+                if (groundCellPos != null && cellPos.y < gridSize.y)
+                    PlacePreviewBlock(cellPos);
             }
         }
     }
 
     private void PlacePreviewBlock(Vector3Int cellPos)
     {
-        GameObject go = Instantiate(buildBlockPrefab, Grid.GetCell(cellPos).GetCenter(), Quaternion.identity);
-        previewBlocks.Add(go);
-        Grid.EnableCell(cellPos);
+        Cell cell = Grid.GetCell(cellPos);
+        if (cell != null && !cell.enabled)
+        {
+            GameObject go = Instantiate(buildBlockPrefab, Grid.GetCell(cellPos).GetCenter(), Quaternion.identity);
+            previewBlocks.Add(go);
+            Grid.EnableCell(cellPos);
+        }
     }
 
     public void ClearPreview()
